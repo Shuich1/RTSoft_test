@@ -1,5 +1,5 @@
-from pydantic import BaseSettings, PostgresDsn
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseSettings, PostgresDsn
 
 
 class PostgresSettings(BaseSettings):

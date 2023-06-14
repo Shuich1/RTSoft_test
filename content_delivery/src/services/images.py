@@ -1,13 +1,13 @@
 import random
 from functools import lru_cache
+from http import HTTPStatus
 from typing import Optional
 
-from db.database import DataStorage, get_data_storage
 from db.cache import Cache, get_cache
+from db.database import DataStorage, get_data_storage
 from fastapi import Depends, HTTPException
 from models.images import Image
 from schemas.images import ImageSchema
-from http import HTTPStatus
 
 
 class ImageService:

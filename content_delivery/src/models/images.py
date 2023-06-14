@@ -1,8 +1,9 @@
+import uuid
+from typing import Any
+
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
-import uuid
-from typing import Any
 
 Base: Any = declarative_base()
 

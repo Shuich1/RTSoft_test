@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from typing import Optional
 
-from models.images import Base, Image, Category
+from models.images import Base, Category, Image
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session, sessionmaker
 

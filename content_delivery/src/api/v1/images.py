@@ -1,10 +1,10 @@
 from typing import Annotated
 
+from core.config import templates
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import HTMLResponse
 from schemas.images import ImageSchema
 from services.images import ImageService, get_film_service
-from core.config import templates
 
 router = APIRouter()
 
@@ -19,6 +19,7 @@ async def get_image(
     image_service: ImageService = Depends(get_film_service)
 ):
     return await image_service.get_image(categories=category)
+
 
 @router.get(
     "/html",
