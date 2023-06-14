@@ -1,0 +1,39 @@
+/* style.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f5f5f5;
+}
+
+.container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-title {
+    color: #333;
+    font-size: 24px;
+    margin-top: 10px;
+}
+
+.image {
+    max-width: 500px;
+    margin-top: 20px;
+}
+
+.repetitions {
+    color: #777;
+    font-size: 18px;
+}
+
+.categories {
+    color: #555;
+    font-size: 18px;
+    font-style: italic;
+}
