@@ -10,8 +10,8 @@ Base: Any = declarative_base()
 
 class Image(Base):
     __tablename__ = 'image'
-    id: uuid.UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    url: uuid.UUID = Column(String)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    url = Column(String)
     repetitions: int = Column(Integer)
 
     categories: List['Category'] = relationship(
@@ -23,7 +23,7 @@ class Image(Base):
 
 class Category(Base):
     __tablename__ = 'category'
-    id: uuid.UUID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: str = Column(String)
 
     images: List[Image] = relationship(
@@ -35,12 +35,12 @@ class Category(Base):
 
 class ImageCategoryAssociation(Base):
     __tablename__ = 'image_category'
-    image_id: uuid.UUID = Column(
+    image_id = Column(
         UUID(as_uuid=True),
         ForeignKey('image.id'),
         primary_key=True
     )
-    category_id: uuid.UUID = Column(
+    category_id = Column(
         UUID(as_uuid=True),
         ForeignKey('category.id'),
         primary_key=True
