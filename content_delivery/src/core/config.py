@@ -13,7 +13,7 @@ class PostgresSettings(BaseSettings):
 class Settings(BaseSettings):
     pg_settings = PostgresSettings()
     db: PostgresDsn = PostgresDsn.build(
-        scheme="postgresql",
+        scheme="postgresql+asyncpg",
         user=pg_settings.postgres_user,
         password=pg_settings.postgres_password,
         host=pg_settings.postgres_host,

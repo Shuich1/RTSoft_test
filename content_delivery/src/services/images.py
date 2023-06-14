@@ -86,12 +86,15 @@ class ImageService:
         images = None
         result = None
 
-        with self.db.get_session() as session:
+        async with self.db.get_session() as session:
             if categories:
-                images = self.db.get_images_by_category(session, categories)
+                images = await self.db.get_images_by_category(
+                    session,
+                    categories
+                )
 
             if not categories or not images:
-                images = self.db.get_images_by_random(session)
+                images = await self.db.get_images_by_random(session)
 
             if not images:
                 raise HTTPException(
