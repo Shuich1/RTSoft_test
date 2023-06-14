@@ -1,0 +1,10 @@
+[flake8]
+extend-immutable-calls = Depends, fastapi.Depends, fastapi.params.Depends
+exclude = 
+    env
+    .env
+    ./env
+    env/
+    .env/
+    venv
+    venv/
