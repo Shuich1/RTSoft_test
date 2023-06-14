@@ -12,7 +12,7 @@ router = APIRouter()
 @router.get(
     "/",
     response_model=ImageSchema,
-    summary="Получение изображения"
+    summary="Получение изображения в JSON представлении"
 )
 async def get_image(
     category: Annotated[list[str] | None, Query()] = None,
@@ -23,7 +23,8 @@ async def get_image(
 
 @router.get(
     "/html",
-    response_class=HTMLResponse
+    response_class=HTMLResponse,
+    summary="Получение изображения в HTML представлении"
 )
 async def get_image_html(
     request: Request,

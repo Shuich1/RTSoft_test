@@ -40,8 +40,9 @@ http://127.0.0.1/api/v1/images/html?category=flight&category=show
 
 ## Установка
 1. Клонирование репозитория `git clone https://github.com/Shuich1/RTSoft_test.git`
-2. Запуск сервисов `docker-compose up --build`
-3. Остановка сервисов `docker-compose down`
+2. Создание переменных окружения (переименуйте файл `sample.env` в `.env`)
+3. Запуск сервисов `docker-compose up --build`
+4. Остановка сервисов `docker-compose down`
 
 ## Использование
 
