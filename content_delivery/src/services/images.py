@@ -11,6 +11,7 @@ from schemas.images import ImageSchema
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 
+
 class ImageService:
     def __init__(self, db: DataStorage, cache: Cache) -> None:
         self.db = db
