@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
-from contextlib import contextmanager
+from contextlib import asynccontextmanager
 from typing import Optional
 
 from models.images import Base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 
 class DataStorage(ABC):
@@ -31,28 +30,26 @@ class SQLAlchemyDataStorage(DataStorage):
         self._session = None
         self._base = Base
 
-    def connect(self, dsn):
-        self._db_engine = create_engine(dsn)
-        self._session = sessionmaker(
-            autocommit=False,
+    async def connect(self, dsn):
+        self._db_engine = create_async_engine(dsn)
+        self._session = async_sessionmaker(
             autoflush=False,
-            bind=self._db_engine
+            bind=self._db_engine,
+            expire_on_commit=False
         )
 
-    def db_init(self):
-        self._base.metadata.create_all(self._db_engine)
+    async def db_init(self):
+        async with self._db_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
 
-    @contextmanager
-    def get_session(self):
-        try:
-            session = self._session()
+    @asynccontextmanager
+    async def get_session(self):
+        async with self._session() as session:
             yield session
-            session.commit()
-        except Exception:
-            session.rollback()
+            await session.commit()
 
-    def disconnect(self):
-        self._session.close_all()
+    async def disconnect(self):
+        await self._db_engine.dispose()
 
 
 data_storage: Optional[DataStorage] = None

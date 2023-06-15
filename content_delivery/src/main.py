@@ -22,9 +22,9 @@ app = FastAPI(
 @app.on_event("startup")
 async def startup():
     database.data_storage = database.SQLAlchemyDataStorage()
-    database.data_storage.connect(settings.db)
-    database.data_storage.db_init()
-    fill_database_from_csv(database.data_storage, settings.csv_file_path)
+    await database.data_storage.connect(settings.db)
+    await database.data_storage.db_init()
+    await fill_database_from_csv(database.data_storage, settings.csv_file_path)
     cache.cache = cache.RedisCache(
         redis=await aioredis.create_redis_pool(
             (settings.redis_host, settings.redis_port),
@@ -37,7 +37,7 @@ async def startup():
 
 @app.on_event("shutdown")
 async def shutdown():
-    database.data_storage.disconnect()
+    await database.data_storage.disconnect()
     await cache.cache.close()
 
 

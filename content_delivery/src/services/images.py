@@ -8,8 +8,9 @@ from db.database import DataStorage, get_data_storage
 from fastapi import Depends, HTTPException
 from models.images import Image, Category
 from schemas.images import ImageSchema
-from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ImageService:
@@ -65,28 +66,32 @@ class ImageService:
 
         return None
 
-    def _get_images_by_category(
+    async def _get_images_by_category(
         self,
-        session: Session,
+        session: AsyncSession,
         categories: Optional[list[str]]
     ) -> list:
         images = None
 
-        images = session.query(Image).filter(
+        images = await session.execute(select(Image).filter(
             Image.categories.any(Category.name.in_(categories)),
             Image.repetitions > 0
-        ).all()
+        ).options(joinedload(Image.categories)))
 
-        return images
+        images = [image[0] for image in images.unique().all()]  # type: ignore
 
-    def _get_images_by_random(self, session: Session) -> list:
+        return images  # type: ignore
+
+    async def _get_images_by_random(self, session: AsyncSession) -> list:
         images = None
 
-        images = session.query(Image).filter(
+        images = await session.execute(select(Image).filter(
             Image.repetitions > 0
-        ).order_by(func.random()).all()
+        ).order_by(func.random()).options(joinedload(Image.categories)))
 
-        return images
+        images = [image[0] for image in images.unique().all()]  # type: ignore
+
+        return images  # type: ignore
 
     async def get_image(
         self,
@@ -111,12 +116,15 @@ class ImageService:
         images = None
         result = None
 
-        with self.db.get_session() as session:
+        async with self.db.get_session() as session:
             if categories:
-                images = self._get_images_by_category(session, categories)
+                images = await self._get_images_by_category(
+                    session,
+                    categories
+                )
 
             if not categories or not images:
-                images = self._get_images_by_random(session)
+                images = await self._get_images_by_random(session)
 
             if not images:
                 raise HTTPException(
