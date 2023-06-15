@@ -6,9 +6,10 @@ from typing import Optional
 from db.cache import Cache, get_cache
 from db.database import DataStorage, get_data_storage
 from fastapi import Depends, HTTPException
-from models.images import Image
+from models.images import Image, Category
 from schemas.images import ImageSchema
-
+from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 class ImageService:
     def __init__(self, db: DataStorage, cache: Cache) -> None:
@@ -63,6 +64,29 @@ class ImageService:
 
         return None
 
+    def _get_images_by_category(
+        self,
+        session: Session,
+        categories: Optional[list[str]]
+    ) -> list:
+        images = None
+
+        images = session.query(Image).filter(
+            Image.categories.any(Category.name.in_(categories)),
+            Image.repetitions > 0
+        ).all()
+
+        return images
+
+    def _get_images_by_random(self, session: Session) -> list:
+        images = None
+
+        images = session.query(Image).filter(
+            Image.repetitions > 0
+        ).order_by(func.random()).all()
+
+        return images
+
     async def get_image(
         self,
         categories: Optional[list[str]]
@@ -88,10 +112,10 @@ class ImageService:
 
         with self.db.get_session() as session:
             if categories:
-                images = self.db.get_images_by_category(session, categories)
+                images = self._get_images_by_category(session, categories)
 
             if not categories or not images:
-                images = self.db.get_images_by_random(session)
+                images = self._get_images_by_random(session)
 
             if not images:
                 raise HTTPException(

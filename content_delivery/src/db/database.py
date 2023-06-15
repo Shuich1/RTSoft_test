@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from typing import Optional
 
-from models.images import Base, Category, Image
-from sqlalchemy import create_engine, func
-from sqlalchemy.orm import Session, sessionmaker
+from models.images import Base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 class DataStorage(ABC):
@@ -53,29 +53,6 @@ class SQLAlchemyDataStorage(DataStorage):
 
     def disconnect(self):
         self._session.close_all()
-
-    def get_images_by_category(
-        self,
-        session: Session,
-        categories: Optional[list[str]]
-    ) -> list:
-        images = None
-
-        images = session.query(Image).filter(
-            Image.categories.any(Category.name.in_(categories)),
-            Image.repetitions > 0
-        ).all()
-
-        return images
-
-    def get_images_by_random(self, session: Session) -> list:
-        images = None
-
-        images = session.query(Image).filter(
-            Image.repetitions > 0
-        ).order_by(func.random()).all()
-
-        return images
 
 
 data_storage: Optional[DataStorage] = None
