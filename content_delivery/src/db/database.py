@@ -47,7 +47,7 @@ class SQLAlchemyDataStorage(DataStorage):
             await conn.run_sync(Base.metadata.create_all)
 
     @asynccontextmanager
-    async def get_session(self) -> AsyncSession:
+    async def get_session(self):
         async with self._session() as session:
             yield session
             await session.commit()
@@ -67,7 +67,7 @@ class SQLAlchemyDataStorage(DataStorage):
             Image.repetitions > 0
         ).options(joinedload(Image.categories)))
 
-        images = [image[0] for image in images.unique().all()]
+        images = [image[0] for image in list(images.unique().all())]
 
         return images
 
@@ -78,7 +78,7 @@ class SQLAlchemyDataStorage(DataStorage):
             Image.repetitions > 0
         ).order_by(func.random()).options(joinedload(Image.categories)))
 
-        images = [image[0] for image in images.unique().all()]
+        images = [image[0] for image in list(images.unique().all())]
 
         return images
 
