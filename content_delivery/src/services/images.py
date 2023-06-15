@@ -6,9 +6,11 @@ from typing import Optional
 from db.cache import Cache, get_cache
 from db.database import DataStorage, get_data_storage
 from fastapi import Depends, HTTPException
-from models.images import Image
+from models.images import Image, Category
 from schemas.images import ImageSchema
-
+from sqlalchemy.orm import joinedload
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 class ImageService:
     def __init__(self, db: DataStorage, cache: Cache) -> None:
@@ -63,6 +65,33 @@ class ImageService:
 
         return None
 
+    async def _get_images_by_category(
+        self,
+        session: AsyncSession,
+        categories: Optional[list[str]]
+    ) -> list:
+        images = None
+
+        images = await session.execute(select(Image).filter(
+            Image.categories.any(Category.name.in_(categories)),
+            Image.repetitions > 0
+        ).options(joinedload(Image.categories)))
+
+        images = [image[0] for image in images.unique().all()]  # type: ignore
+
+        return images  # type: ignore
+
+    async def _get_images_by_random(self, session: AsyncSession) -> list:
+        images = None
+
+        images = await session.execute(select(Image).filter(
+            Image.repetitions > 0
+        ).order_by(func.random()).options(joinedload(Image.categories)))
+
+        images = [image[0] for image in images.unique().all()]  # type: ignore
+
+        return images  # type: ignore
+
     async def get_image(
         self,
         categories: Optional[list[str]]
@@ -88,13 +117,13 @@ class ImageService:
 
         async with self.db.get_session() as session:
             if categories:
-                images = await self.db.get_images_by_category(
+                images = await self._get_images_by_category(
                     session,
                     categories
                 )
 
             if not categories or not images:
-                images = await self.db.get_images_by_random(session)
+                images = await self._get_images_by_random(session)
 
             if not images:
                 raise HTTPException(

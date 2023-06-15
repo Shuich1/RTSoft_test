@@ -2,11 +2,8 @@ from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager
 from typing import Optional
 
-from models.images import Base, Category, Image
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.orm import joinedload
+from models.images import Base
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 
 class DataStorage(ABC):
@@ -43,7 +40,6 @@ class SQLAlchemyDataStorage(DataStorage):
 
     async def db_init(self):
         async with self._db_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
     @asynccontextmanager
@@ -54,33 +50,6 @@ class SQLAlchemyDataStorage(DataStorage):
 
     async def disconnect(self):
         await self._db_engine.dispose()
-
-    async def get_images_by_category(
-        self,
-        session: AsyncSession,
-        categories: Optional[list[str]]
-    ) -> list:
-        images = None
-
-        images = await session.execute(select(Image).filter(
-            Image.categories.any(Category.name.in_(categories)),
-            Image.repetitions > 0
-        ).options(joinedload(Image.categories)))
-
-        images = [image[0] for image in images.unique().all()]  # type: ignore
-
-        return images  # type: ignore
-
-    async def get_images_by_random(self, session: AsyncSession) -> list:
-        images = None
-
-        images = await session.execute(select(Image).filter(
-            Image.repetitions > 0
-        ).order_by(func.random()).options(joinedload(Image.categories)))
-
-        images = [image[0] for image in images.unique().all()]  # type: ignore
-
-        return images  # type: ignore
 
 
 data_storage: Optional[DataStorage] = None

@@ -1,7 +1,8 @@
 import csv
-from sqlalchemy import select
+
 from db.database import DataStorage
 from models.images import Category, Image
+from sqlalchemy import select
 
 
 async def fill_database_from_csv(db: DataStorage, file_path: str):
