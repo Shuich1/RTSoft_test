@@ -57,3 +57,6 @@ http://127.0.0.1/api/v1/images/html?category=flight&category=show
 Пример использования эндпоинтов с параметрами:
 1. http://127.0.0.1/api/v1/images/html?category=flight&category=show
 2. http://127.0.0.1/api/v1/images/html?category=games
+
+## Примечание
+В ветке async находится решение с асинхронной реализацией хранилища

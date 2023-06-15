@@ -69,7 +69,7 @@ class SQLAlchemyDataStorage(DataStorage):
 
         images = [image[0] for image in images.unique().all()]  # type: ignore
 
-        return images
+        return images # type: ignore
 
     async def get_images_by_random(self, session: AsyncSession) -> list:
         images = None
@@ -80,7 +80,7 @@ class SQLAlchemyDataStorage(DataStorage):
 
         images = [image[0] for image in images.unique().all()]  # type: ignore
 
-        return images
+        return images # type: ignore
 
 
 data_storage: Optional[DataStorage] = None
