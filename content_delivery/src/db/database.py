@@ -3,8 +3,7 @@ from contextlib import asynccontextmanager
 from typing import Optional
 
 from models.images import Base, Category, Image
-from sqlalchemy import func
-from sqlalchemy.future import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import joinedload
