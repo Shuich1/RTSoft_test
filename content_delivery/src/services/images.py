@@ -12,6 +12,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+
 class ImageService:
     def __init__(self, db: DataStorage, cache: Cache) -> None:
         self.db = db
