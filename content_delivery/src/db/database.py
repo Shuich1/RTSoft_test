@@ -67,7 +67,7 @@ class SQLAlchemyDataStorage(DataStorage):
             Image.repetitions > 0
         ).options(joinedload(Image.categories)))
 
-        images = list([image[0] for image in images.unique().all()])
+        images = [image[0] for image in images.unique().all()]  # type: ignore
 
         return images
 
@@ -78,7 +78,7 @@ class SQLAlchemyDataStorage(DataStorage):
             Image.repetitions > 0
         ).order_by(func.random()).options(joinedload(Image.categories)))
 
-        images = list([image[0] for image in images.unique().all()])
+        images = [image[0] for image in images.unique().all()]  # type: ignore
 
         return images
 
